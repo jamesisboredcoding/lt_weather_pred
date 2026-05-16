@@ -1,0 +1,4 @@
+models/*.pt
+models/checkpoints/*.pt
+data/processed/*.pt
+_test.csv
