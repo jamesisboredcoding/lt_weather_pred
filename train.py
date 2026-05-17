@@ -56,14 +56,13 @@ if args.load:
     print("Loaded checkpoint model states")
 
 step = 0
-max_steps = len(loader) * args.epochs
+max_steps = len(loader) * args.epochs / 2
 t = 0
 
 model.train()
 scaler = torch.amp.GradScaler("cuda")
 
 print(f"Starting training, {args.epochs} epochs, {max_steps:,} steps, {f'saving every {args.save_every} steps' if args.save_every else ''}")
-
 for epoch in range(args.epochs):
     if epoch < _epoch: continue
     for x_batch, y_batch in loader:

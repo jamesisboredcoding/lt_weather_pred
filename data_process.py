@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 
-SEQ_LEN = 244
+SEQ_LEN = 256
 
 class Standardizer:
     def fit(self, X):
@@ -135,23 +135,22 @@ if __name__ == "__main__":
     train_df = df.iloc[:split_idx].copy()
     val_df = df.iloc[split_idx:].copy()
 
-    mixed = numeric_cols + target_cols
-    scaler = Standardizer().fit(train_df[mixed].to_numpy())
+    scaler = Standardizer().fit(train_df[numeric_cols].to_numpy())
+    scaler_features = Standardizer().fit(train_df[target_cols].to_numpy())
 
-    train_df[mixed] = scaler.transform(train_df[mixed].to_numpy())
-    val_df[mixed] = scaler.transform(val_df[mixed].to_numpy())
+    train_df[numeric_cols] = scaler.transform(train_df[numeric_cols].to_numpy())
+    val_df[numeric_cols] = scaler.transform(val_df[numeric_cols].to_numpy())
 
-    train_df.to_csv("_test.csv")
+    train_df[target_cols] = scaler_features.transform(train_df[target_cols].to_numpy())
+    val_df[target_cols] = scaler_features.transform(val_df[target_cols].to_numpy())
 
-    # train_df[target_cols] = df[target_cols]
-    # val_df[target_cols] = df[target_cols]
+    train_df.to_csv("_train.csv")
+    print("Standardized values and saved csv")
 
-
-    # df = df.dropna(subset=target_cols).reset_index(drop=True)
-
-    print("Standardized values")
     with open("data/processed/standardizer.pkl", "wb") as f:
         pickle.dump(scaler, f)
+    with open("data/processed/target_standardizer.pkl", "wb") as f:
+        pickle.dump(scaler_features, f)
 
     X_train, y_train = make_sequences(train_df, feature_cols, target_cols=target_cols, seq_len=SEQ_LEN)
     X_val, y_val = make_sequences(val_df, feature_cols, target_cols=target_cols, seq_len=SEQ_LEN)

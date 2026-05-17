@@ -1,4 +1,5 @@
 models/*.pt
 models/checkpoints/*.pt
 data/processed/*.pt
-_test.csv
+_train.csv
+__pycache__/
